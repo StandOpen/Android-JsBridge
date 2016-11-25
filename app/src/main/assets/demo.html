@@ -1,0 +1,60 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>测试</title>
+    <meta name="Keywords" content=""/>
+    <meta name="Description" content=""/>
+</head>
+
+<body>
+
+<button onclick="doToast()">弹出Toast</button>
+
+
+
+<!--<script  type="text/javascript" src="file:///android_asset/JsBridge.min.js"/>-->
+
+<script>
+    var JsBridge = function(){
+        this.callbacks = {};
+        this.protocol = "zhqd://";
+    }
+
+    JsBridge.prototype.callJava = function(method,port,json,callback)
+    {
+        var message = this.protocol + method + ":" + port + "?json=" + json;
+        this.callbacks[port] = callback;
+        prompt(message,"default");
+    }
+
+    JsBridge.prototype.onback = function(port,msg)
+    {
+        var callback = this.callbacks[port];
+        callback && callback(msg);
+        delete this.callbacks[port];
+    }
+
+    JsBridge.prototype.Toast = function(msg,callback)
+    {
+        this.callJava("toast","1001","{'key':'"+msg+"'}",callback);
+    }
+
+
+    var jsBridge = new JsBridge();
+
+
+
+
+
+    function doToast()
+    {
+        jsBridge.Toast("这是来自网页的信息",function(msg){
+        alert(msg);
+        });
+    }
+</script>
+
+</body>
+
+</html>
